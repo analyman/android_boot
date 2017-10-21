@@ -16,16 +16,19 @@ mount -o rw,remount,rw /system
 
 # install
 ## bin part
-for binfile in $bin_dir/*; do
-    cp $binfile $bin_install
+for binfile in $(ls $bin_dir); do
+    cp $bin_dir/$binfile $bin_install
+    chmod 755 $bin_install/$binfile
 done
 ## etc part
-for etcfile in $etc_dir/*; do
-    cp $etcfile $etc_install
+for etcfile in $(ls $etc_dir); do
+    cp $etc_dir/$etcfile $etc_install
+    chmod 755 $etc_install/$etcfile
 done
 ## init part
-for initfile in $init_dir/*; do
-    cp $initfile $init_install
+for initfile in $(ls $init_dir); do
+    cp $init_dir/$initfile $init_install
+    chmod 755 $init_install/$initfile
 done
 
 mount -o ro,remount,ro /system
