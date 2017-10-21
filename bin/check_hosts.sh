@@ -12,10 +12,12 @@ easy_check()
 {
     log_output "easy check the hosts file" ${0}
     if [[ ! $HOSTS -nt $HOSTS_HATE ]]; then
-        log_output "Merge hosts.hate to hosts."
+        log_output "Merge hosts.hate to hosts." ${0}
         mount -o rw,remount,rw /system
         echo "" >> $HOSTS
         cat $HOSTS_HATE >> $HOSTS
+        sort $HOSTS | uniq > $HOSTS.temp
+        mv $HOSTS.temp $HOSTS
         mount -o ro,remount,ro /system
     fi
     return 0
@@ -25,12 +27,14 @@ easy_check()
 #{ function : nice_check
 nice_check()
 {
-    log_output "nice check is working."
+    log_output "nice check is working." ${0}
     if !(cat $HOSTS | grep "Priv[-]ADD" >> /dev/null); then
-        log_output "Merge hosts.hate to hosts."
+        log_output "Merge hosts.hate to hosts." ${0}
         mount -o rw,remount,rw /system
         echo "" >> $HOSTS
         cat $HOSTS_HATE >> $HOSTS
+        sort $HOSTS | uniq > $HOSTS.temp
+        mv $HOSTS.temp $HOSTS
         mount -o ro,remount,ro /system
     fi
     return 0
