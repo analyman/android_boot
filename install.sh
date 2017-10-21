@@ -1,25 +1,33 @@
 #!/system/bin/sh
 
-boot_func="./etc/boot_func.sh"
-dir_part="./init.d/dir_part.sh"
-sysinit="./bin/sysinit"
+bin_dir="./bin"
+bin_install="/system/bin"
+etc_dir="./etc"
+etc_install="/system/etc"
+init_dir="./init.d"
+if [ -d /su/su.d ]; then
+    init_install="/su/su.d"
+else
+    init_install="/system/etc/init.d"
+fi
 
 # remount /system
 mount -o rw,remount,rw /system
 
 # install
-cp $boot_func /system/etc
-if [ ! -d /su/su.d ]; then
-    echo "You should use \"/su/su.d\" instead of \"/system/etc/init.d\" by installing SuperSU."
-    cp $dir_part /system/etc/init.d
-    chmod 755 /system/etc/boot_func.sh /system/etc/init.d/dir_part.sh
-else
-    echo "Install dir_part to \"/su/su.d\". and remove same file in \"/system/etc/init.d\" if it exists."
-    cp $dir_part /su/su.d
-    if [ -f /system/etc/init.d/dir_part.sh ]; then
-        rm /system/etc/init.d/dir_part.sh
-    fi
-    chmod 755 /su/su.d/dir_part.sh /system/etc/boot_func.sh
-fi
-cp $sysinit /system/bin
-chmod 755 /system/bin/sysinit
+## bin part
+for binfile in $bin_dir/*; do
+    cp $binfile $bin_install
+done
+## etc part
+for etcfile in $etc_dir/*; do
+    cp $etcfile $etc_install
+done
+## init part
+for initfile in $init_dir/*; do
+    cp $initfile $init_install
+done
+
+mount -o ro,remount,ro /system
+
+exit 0

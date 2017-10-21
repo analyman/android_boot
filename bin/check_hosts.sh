@@ -13,7 +13,9 @@ easy_check()
     log_output "easy check the hosts file" ${0}
     if [[ ! $HOSTS -nt $HOSTS_HATE ]]; then
         log_output "Merge hosts.hate to hosts."
+        mount -o rw,remount,rw /system
         cat $HOSTS_HATE >> $HOSTS
+        mount -o ro,remount,ro /system
     fi
     return 0
 }
@@ -25,7 +27,9 @@ nice_check()
     log_output "nice check is working."
     if !(cat $HOSTS | grep "Priv[-]ADD" >> /dev/null); then
         log_output "Merge hosts.hate to hosts."
+        mount -o rw,remount,rw /system
         cat $HOSTS_HATE >> $HOSTS
+        mount -o ro,remount,ro /system
     fi
     return 0
 }
