@@ -1,8 +1,8 @@
 #!/system/bin/sh
 
 # load the log function script
-if [ -f /system/etc/boot_function.sh ]; then
-    source /system/etc/boot_function.sh
+if [ -f /system/etc/boot_func.sh ]; then
+    source /system/etc/boot_func.sh
 fi
 
 #{ Remove some app
@@ -13,7 +13,7 @@ BAN_REGEX=("^.*anyview.*$")
 app_check()
 {
     for one_regex in ${BAN_REGEX[@]}; do
-        if [[ ${1} =~ $one_regex ]]; then
+        if ( echo ${1} | grep $one_regex >> /dev/null ); then
             return 0
         fi
     done
@@ -43,9 +43,9 @@ done
 
 #{ remove text file in download
 WORK_DIR=${EXTERNAL_STORAGE}/Download
-log_output "remove text file in Download"
-for text_file in $WORK_DIR/*; do
-    if [[ $text_file=~^.*\.txt$ ]]; then
+log_output "remove text file in Download" ${0}
+for text_file in $(ls WORK_DIR); do
+    if ( echo $text_file | grep "^.*\.txt$" >> /dev/null ); then
         log_output "rm file \"$text_file\"." ${0}
         rm -rf $text_file
     fi
