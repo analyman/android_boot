@@ -25,11 +25,11 @@ app_check()
 #} end func : app_check
 
 # Main -- remove some app
-log_output -r ${0} "Processing remove app task."
+log_output "-r" ${0} "Processing remove app task."
 for appname in ${APPLIST[@]}; do
     if (app_check $appname); then
         rm -rf $appname
-        log_output -r ${0} "remove \"$appname\"."
+        log_output "-r" ${0} "remove \"$appname\"."
         pushd ${ANDROID_DATA}/data
         if [ -d $appname ]; then
             rm -rf $appname
@@ -46,10 +46,10 @@ done
 
 #{ remove text file in download
 WORK_DIR=${EXTERNAL_STORAGE}/Download
-log_output -r ${0} "remove text file in Download"
+log_output "-r" ${0} "remove text file in Download"
 for text_file in $(ls $WORK_DIR); do
     if ( echo $text_file | grep "^.*\.txt$" >> /dev/null ); then
-        log_output -r ${0} "rm file \"$text_file\"."
+        log_output "-r" ${0} "rm file \"$text_file\"."
         rm -rf $text_file
     fi
 done

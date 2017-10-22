@@ -21,7 +21,7 @@ LOG_ASR=""
 LOG_ASL=""
 FINAL=15
 i=0
-for [ $i -lt $FINAL ]; do
+while [ $i -lt $FINAL ]; do
     LOG_ASR=$LOG_ASR">"
     LOG_ASL=$LOG_ASL"<"
 done
