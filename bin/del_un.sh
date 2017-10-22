@@ -29,14 +29,8 @@ app_check()
 log_output -r "Processing remove app task."
 for appname in ${APPLIST[@]}; do
     if (app_check $appname); then
-        rm -rf ${ANDROID_DATA}/app/$appname
-        log_output -r "remove \"$appname\"."
-        if [ -d ${ANDROID_DATA}/data/$appname ]; then
-            rm -rf ${ANDROID_DATA}/data/$appname
-        fi
-        if [ -d ${EXTERNAL_STORAGE}/Android/data/$appname ]; then
-            rm -rf ${EXTERNAL_STORAGE}/Android/data/$appname
-        fi
+       pm uninstall ${appname%-*} 
+       log_output -r "uninstall \"$appname\"."
     fi
 done
 #} end remove some app
