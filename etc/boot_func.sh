@@ -24,6 +24,7 @@ i=0
 while [ $i -lt $FINAL ]; do
     LOG_ASR=$LOG_ASR">"
     LOG_ASL=$LOG_ASL"<"
+    i=$[$i + 1]
 done
 ## LOG_BEG
 LOG_BEG()
