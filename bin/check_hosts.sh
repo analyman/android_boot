@@ -5,16 +5,17 @@ if [ -f /system/etc/boot_func.sh ]; then
     source /system/etc/boot_func.sh
 fi
 
-LOG_BEG ${0}
+# LOG_BEG function
+LOG_BEG
 
 HOSTS="/system/etc/hosts"
 HOSTS_HATE="/system/etc/hosts.hate"
 #{ function : easy_check
 easy_check()
 {
-    log_output "-r" ${0} "easy check the hosts file"
+    log_output -r "easy check the hosts file"
     if [[ ! $HOSTS -nt $HOSTS_HATE ]]; then
-        log_output "-r" ${0} "Merge hosts.hate to hosts."
+        log_output -r "Merge hosts.hate to hosts."
         mount -o rw,remount,rw /system
         echo "" >> $HOSTS
         cat $HOSTS_HATE >> $HOSTS
@@ -29,9 +30,9 @@ easy_check()
 #{ function : nice_check
 nice_check()
 {
-    log_output "-r" ${0} "nice check is working."
+    log_output -r "nice check is working."
     if ( ! cat $HOSTS | grep "Priv[-]ADD" >> /dev/null ); then
-        log_output "-r" ${0} "Merge hosts.hate to hosts."
+        log_output -r "Merge hosts.hate to hosts."
         mount -o rw,remount,rw /system
         echo "" >> $HOSTS
         cat $HOSTS_HATE >> $HOSTS
@@ -45,7 +46,7 @@ nice_check()
 
 # Main
 if [ ! -f ${HOSTS_HATE} ]; then
-    log_output "-e" ${0} "the file \"${HOSTS_HATE}\" don't exist."
+    log_output -e "the file \"${HOSTS_HATE}\" don't exist."
     exit 1
 fi
 if [ $(date "+%M") -lt 5 ]; then
@@ -54,5 +55,6 @@ else
     easy_check
 fi
 
-LOG_END ${0}
+# LOG_END function
+LOG_END
 exit 0

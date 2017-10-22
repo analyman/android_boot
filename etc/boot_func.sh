@@ -1,17 +1,19 @@
 #!/system/bin/sh
 
+__FILE=${0}
+
 #{ Regular output
 REG_LOGS="/data/priv_output.logs"
 log_output()
 {
-    if [ ${1}="-e" ]; then
+    if [ ${1} = "-e" ]; then
         TAGS=" ERROR!"
-    elif [ ${1}="-w" ]; then
+    elif [ ${1} = "-w" ]; then
         TAGS="WARNING!"
     else
         TAGS="   OK!  "
     fi
-    echo "$(date "+%m-%d %H:%M:%S") : $TAGS : \"$2\" : $3" >> $REG_LOGS 
+    echo "$(date "+%m-%d %H:%M:%S") : $TAGS : \"$__FILE\" : $2" >> $REG_LOGS 
     return 0 
 }
 #}
@@ -28,12 +30,12 @@ done
 LOG_BEG()
 {
     echo "" >> $REG_LOGS
-    echo "$LOG_ASR\"$1\"$LOG_ASR" >> $REG_LOGS
+    echo "$LOG_ASR\"$__FILE\"$LOG_ASR" >> $REG_LOGS
     return 0
 }
 ## LOG_END
 LOG_END()
 {
-    echo "$LOG_ASL\"$1\"$LOG_ASL" >> $REG_LOGS
+    echo "$LOG_ASL\"$__FILE\"$LOG_ASL" >> $REG_LOGS
     return 0
 }
