@@ -5,9 +5,12 @@ if [ -f /system/etc/boot_func.sh ]; then
     source /system/etc/boot_func.sh
 fi
 
+LOG_BEG ${0}
+
 #{ Remove some app
 APPLIST=`ls ${ANDROID_DATA}/app`
-BAN_REGEX=("^.*anyview.*$")
+BAN_REGEX=("^.*anyview.*$"
+"^com\.tencent\.tmgp\.sgame[-][0-9]$")
 
 #{ func : app_check
 app_check()
@@ -22,11 +25,11 @@ app_check()
 #} end func : app_check
 
 # Main -- remove some app
-log_output "Processing remove app task." ${0}
+log_output -r ${0} "Processing remove app task."
 for appname in ${APPLIST[@]}; do
     if (app_check $appname); then
         rm -rf $appname
-        log_output "remove \"$appname\"." ${0}
+        log_output -r ${0} "remove \"$appname\"."
         pushd ${ANDROID_DATA}/data
         if [ -d $appname ]; then
             rm -rf $appname
@@ -43,13 +46,14 @@ done
 
 #{ remove text file in download
 WORK_DIR=${EXTERNAL_STORAGE}/Download
-log_output "remove text file in Download" ${0}
+log_output -r ${0} "remove text file in Download"
 for text_file in $(ls $WORK_DIR); do
     if ( echo $text_file | grep "^.*\.txt$" >> /dev/null ); then
-        log_output "rm file \"$text_file\"." ${0}
+        log_output -r ${0} "rm file \"$text_file\"."
         rm -rf $text_file
     fi
 done
 #}
 
+LOG_END ${0}
 exit 0
