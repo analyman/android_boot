@@ -41,5 +41,5 @@ __exit()
     echo "$LOG_ASL\"$__FILE\"$LOG_ASL" >> $__TEMP
     cat $__TEMP >> $REG_LOGS
     rm $__TEMP
-    exit $0
+    exit $1
 }
