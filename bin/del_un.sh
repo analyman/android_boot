@@ -46,6 +46,5 @@ for text_file in $(ls $WORK_DIR); do
 done
 #}
 
-# LOG_END function
-LOG_END
-exit 0
+# call __exit function
+__exit 0

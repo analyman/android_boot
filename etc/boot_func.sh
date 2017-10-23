@@ -1,6 +1,7 @@
 #!/system/bin/sh
 
 __FILE=${0}
+__TEMP=`mktemp`
 
 #{ Regular output
 REG_LOGS="/data/priv_output.logs"
@@ -13,7 +14,7 @@ log_output()
     else
         TAGS="   OK!  "
     fi
-    echo "$(date "+%m-%d %H:%M:%S") : $TAGS : \"$__FILE\" : $2" >> $REG_LOGS 
+    echo "$(date "+%m-%d %H:%M:%S") : $TAGS : \"$__FILE\" : $2" >> $__TEMP
     return 0 
 }
 #}
@@ -29,13 +30,16 @@ done
 ## LOG_BEG
 LOG_BEG()
 {
-    echo "" >> $REG_LOGS
-    echo "$LOG_ASR\"$__FILE\"$LOG_ASR" >> $REG_LOGS
+    echo "" >> $__TEMP
+    echo "$LOG_ASR\"$__FILE\"$LOG_ASR" >> $__TEMP
     return 0
 }
-## LOG_END
-LOG_END()
+
+## __exit function
+__exit()
 {
-    echo "$LOG_ASL\"$__FILE\"$LOG_ASL" >> $REG_LOGS
-    return 0
+    echo "$LOG_ASL\"$__FILE\"$LOG_ASL" >> $__TEMP
+    cat $__TEMP >> $REG_LOGS
+    rm $__TEMP
+    exit $0
 }

@@ -5,7 +5,7 @@ BOOT_FUNC="/system/etc/boot_func.sh"
 if [ -x $BOOT_FUNC ]; then
     source $BOOT_FUNC
 else
-    exit 1
+    __exit 1
 fi
 
 # LOG_BEG function
@@ -15,7 +15,7 @@ LOG_BEG
 log_output -r "check the busybox."
 if [ -z `which busybox` ]; then
     error_log_output -e "You need install busybox."
-    exit 1
+    __exit 1
 fi
 
 #{ Termux /usr /bin
@@ -67,6 +67,5 @@ fi
 
 log_output -r "Finish execute!"
 
-# LOG_END function
-LOG_END
-exit 0
+# call __exit
+____exit 0

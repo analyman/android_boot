@@ -47,7 +47,7 @@ nice_check()
 # Main
 if [ ! -f ${HOSTS_HATE} ]; then
     log_output -e "the file \"${HOSTS_HATE}\" don't exist."
-    exit 1
+    __exit 1
 fi
 if [ $(date "+%M") -lt 5 ]; then
     nice_check
@@ -55,6 +55,5 @@ else
     easy_check
 fi
 
-# LOG_END function
-LOG_END
-exit 0
+# __exit function
+__exit 0
