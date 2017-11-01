@@ -41,7 +41,7 @@ log_output -r "remove text file in Download"
 for text_file in $(ls $WORK_DIR); do
     if ( echo $text_file | grep "^.*\.txt$" >> /dev/null ); then
         log_output -r "rm file \"$text_file\"."
-        rm -rf $text_file
+        rm -rf $WORK_DIR/$text_file
     fi
 done
 #}
