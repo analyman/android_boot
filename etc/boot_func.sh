@@ -1,7 +1,7 @@
 #!/system/bin/sh
 
 __FILE=${0}
-__TEMP=`mktemp`
+__TEMP="/data/$$.temp"
 
 #{ Regular output
 REG_LOGS="/data/priv_output.logs"
