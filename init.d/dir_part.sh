@@ -1,11 +1,23 @@
 #!/system/bin/sh
 
-# source boot function
-BOOT_FUNC="/system/etc/boot_func.sh"
-if [ -x $BOOT_FUNC ]; then
-    source $BOOT_FUNC
+# merge the log function
+if [ -f /system/etc/boot_func.sh ]; then
+    source /system/etc/boot_func.sh
 else
-    __exit 1
+#{ avoid a error
+    LOG_BEG()
+    {
+        return 0
+    }
+    log_output()
+    {
+        return 0
+    }
+    __exit()
+    {
+        exit $1
+    }
+#}
 fi
 
 # LOG_BEG function

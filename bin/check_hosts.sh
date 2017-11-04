@@ -3,6 +3,21 @@
 # merge the log function
 if [ -f /system/etc/boot_func.sh ]; then
     source /system/etc/boot_func.sh
+else
+#{ avoid a error
+    LOG_BEG()
+    {
+        return 0
+    }
+    log_output()
+    {
+        return 0
+    }
+    __exit()
+    {
+        exit $1
+    }
+#}
 fi
 
 # LOG_BEG function
@@ -31,6 +46,9 @@ easy_check()
 nice_check()
 {
     log_output -r "nice check is working."
+    if (which get_hosts.sh >> /dev/null); then
+        get_hosts.sh &
+    fi
     if ( ! cat $HOSTS | grep "Priv[-]ADD" >> /dev/null ); then
         log_output -r "Merge hosts.hate to hosts."
         mount -o rw,remount,rw /system
