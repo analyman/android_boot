@@ -33,6 +33,13 @@ if [ -f $OUTPUT_FILE ]; then
     rm -f $OUTPUT_FILE
 fi
 
+#{ prepare check
+# root check
+if [ ! $USER="root" ]; then
+    echo "Maybe run this script by root"
+    __exit 1
+fi
+
 # curl check
 if [ -z `which curl` ]; then
     log_output -e "Need install curl."
@@ -43,8 +50,10 @@ if [ -z `which ps` ]; then
     log_output -e "Need ps command."
     __exit 1
 fi
+#}
 
 # Main Process
+## get hosts file
 curl -o ${OUTPUT_FILE} ${HOSTS_URL} &
 curl_pid=$!
 __LOOP=12
@@ -66,20 +75,19 @@ for count in $(seq 1 $__LOOP); do
     fi
     sleep 5
 done
-## replace by get file
-if [ $USER="root" ]; then
-    cp -f $OUTPUT_FILE /etc/hosts
-else
-    echo "Maybe run this script by root"
-    __exit 1
-fi
-if [ -f /etc/hosts.hate ]; then
-    log_output -r "merge the hate hosts file to getting file."
-    if [ $OUTPUT_FILE="/data/hosts" ]; then
-        mount -o rw,remount,rw /system
-        cat /etc/hosts.hate >> /etc/hosts
-        mount -o ro,remount,ro /system
+
+## install hosts file
+if [ -d /system/app ]; then
+    mount -o rw,remount,rw /system
+    cp -f $OUTPUT_FILE /system/etc
+    if [ -f /system/etc/hosts.hate ]; then
+        log_output -r "merge the hate hosts file to getting file."
+        cat /system/etc/hosts.hate >> /system/etc/hosts
     fi
+    mount -o ro,remount,ro /system
+else
+    cp -f $OUTPUT_FILE /system/etc
+    log_output -r "merge the hate hosts file to getting file."
     cat /etc/hosts.hate >> /etc/hosts
 fi
 
