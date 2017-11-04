@@ -24,7 +24,7 @@ fi
 LOG_BEG
 
 HOSTS_URL="https://raw.githubusercontent.com/googlehosts/hosts/master/hosts-files/hosts"
-if (uname | grep 'Android' >> /dev/null); then
+if [ -d /system/app ]; then
     OUTPUT_FILE=/data/hosts
 else
     OUTPUT_FILE=$HOME/hosts
@@ -34,22 +34,22 @@ if [ -f $OUTPUT_FILE ]; then
 fi
 
 # curl check
-if !(which curl >> /dev/null); then
+if [ -z `which curl` ]; then
     log_output -e "Need install curl."
     __exit 1
 fi
 # ps check
-if !(which ps >> /dev/null); then
+if [ -z `which ps` ]; then
     log_output -e "Need ps command."
     __exit 1
 fi
 
 # Main Process
-curl -o ${OUTPUT_FILE} ${HOSTS_URL} >> /dev/null &
+curl -o ${OUTPUT_FILE} ${HOSTS_URL} &
 curl_pid=$!
 __LOOP=12
 for count in $(seq 1 $__LOOP); do
-    if !(ps ${curl_pid} | grep '[0-9]' >> null); then
+    if [ -z `ps ${curl_pid} | grep "$curl_pid"` ]; then
         if [ -f $OUTPUT_FILE ];then
             log_output -r "getting hosts maybe ok!"
             break
