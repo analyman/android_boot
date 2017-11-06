@@ -20,6 +20,9 @@ else
 #}
 fi
 
+# remove log file when boot
+rm -f ${REG_LOGS}
+
 # LOG_BEG function
 LOG_BEG
 
@@ -80,4 +83,4 @@ fi
 log_output -r "Finish execute!"
 
 # call __exit
-____exit 0
+__exit 0

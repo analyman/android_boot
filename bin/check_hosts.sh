@@ -25,53 +25,71 @@ LOG_BEG
 
 HOSTS="/system/etc/hosts"
 HOSTS_HATE="/system/etc/hosts.hate"
-#{ function : easy_check
-easy_check()
-{
-    log_output -r "easy check the hosts file"
-    if [[ ! $HOSTS -nt $HOSTS_HATE ]]; then
-        log_output -r "Merge hosts.hate to hosts."
-        mount -o rw,remount,rw /system
-        echo "" >> $HOSTS
-        cat $HOSTS_HATE >> $HOSTS
-        sort $HOSTS | uniq > $HOSTS.temp
-        mv $HOSTS.temp $HOSTS
-        mount -o ro,remount,ro /system
-    fi
-    return 0
-}
-#} end function : easy_check
+HOSTS_SRC="/data/hosts"
+github_src="https://raw.githubusercontent.com/analyman/android_boot/master/etc/hosts.hate"
 
-#{ function : nice_check
-nice_check()
+#{ Checking...
+checking()
 {
-    log_output -r "nice check is working."
-    if (which get_hosts.sh >> /dev/null); then
-        get_hosts.sh &
+    if [ ! -f $HOSTS ]; then
+        if [ -f ${HOSTS_SRC} ]; then
+            cp ${HOSTS_SRC} $HOSTS
+        fi
+    else
+        log_output -w "Don't exist a hosts file."
+        if [ ! -z `which get_hosts.sh` ]; then
+            log_output -r "Get hosts from internet by script, after 1 minute."
+            sh -c "sleep 60; get_hosts.sh && sleep 60; check_hosts.sh" &
+        fi
     fi
-    if ( ! cat $HOSTS | grep "Priv[-]ADD" >> /dev/null ); then
-        log_output -r "Merge hosts.hate to hosts."
-        mount -o rw,remount,rw /system
-        echo "" >> $HOSTS
-        cat $HOSTS_HATE >> $HOSTS
-        sort $HOSTS | uniq > $HOSTS.temp
-        mv $HOSTS.temp $HOSTS
-        mount -o ro,remount,ro /system
+    # Main...
+    if [ ! -f ${HOSTS_HATE} ]; then
+        log_output -w "The file <${HOSTS_HATE}> don't exist, try to get it from github."
+        curl -o ${HOSTS_HATE} ${github_src}
+        if [ $? -ne 0 ]; then
+            log_output -w "Get hosts.hate file fail."
+        fi
+    fi
+    if [ ! -f ${HOSTS_HATE} ] && [ ! -f ${HOSTS} ]; then
+        log_output -e "Both hosts and hosts.hate file don't exist."
+        __exit 1
+    elif [ ! -f ${HOSTS_HATE} ]; then
+        log_output -w "The hosts.hate don't exist, exit."
+        __exit 1
+    elif [ ! -f ${HOSTS} ]; then
+        log_output -w "The hosts file don't exist, copy hosts.hate to it."
+        cp $HOSTS_HATE $HOSTS
+        __exit 1
+    else
+        if [[ ! $HOSTS -nt $HOSTS_HATE ]]; then
+            log_output -r "<$HOSTS> is older than <HOSTS_HATE>."
+            log_output -r "Merge <$HOSTS_HATE> to <$HOSTS>."
+            mount -o rw,remount,rw /system
+            echo "" >> $HOSTS
+            cat $HOSTS_HATE >> $HOSTS
+            sort $HOSTS | uniq > $HOSTS.temp
+            mv $HOSTS.temp $HOSTS
+            mount -o ro,remount,ro /system
+            __exit 0
+        fi
+        if ( ! cat $HOSTS | grep "Priv[-]ADD" >> /dev/null ); then
+            log_output -r "<$HOSTS> don't contain <$HOSTS_HATE>."
+            log_output -r "Merge <$HOSTS_HATE> to <$HOSTS>."
+            mount -o rw,remount,rw /system
+            echo "" >> $HOSTS
+            cat $HOSTS_HATE >> $HOSTS
+            sort $HOSTS | uniq > $HOSTS.temp
+            mv $HOSTS.temp $HOSTS
+            mount -o ro,remount,ro /system
+            __exit 0
+        fi
     fi
     return 0
 }
-#}
+#} end Checking
 
 # Main
-if [ ! -f ${HOSTS_HATE} ]; then
-    log_output -e "the file \"${HOSTS_HATE}\" don't exist."
-    __exit 1
-fi
-if [ $(date "+%M") -lt 5 ]; then
-    nice_check
-else
-    easy_check
-fi
+checking
 
 # __exit function
 __exit 0

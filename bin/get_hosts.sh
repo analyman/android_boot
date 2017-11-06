@@ -1,4 +1,4 @@
-#!/system/sh
+#!/system/bin/sh
 
 # merge the log function
 if [ -f /system/etc/boot_func.sh ]; then
@@ -60,15 +60,15 @@ __LOOP=12
 for count in $(seq 1 $__LOOP); do
     if [ -z `ps ${curl_pid} | grep "$curl_pid"` ]; then
         if [ -f $OUTPUT_FILE ];then
-            log_output -r "getting hosts maybe ok!"
+            log_output -r "Get hosts maybe ok!"
             break
         else
-            log_output -e "getting hosts fail, unknow reason."
+            log_output -e "Get hosts fail, unknow reason."
             __exit 1
         fi
     fi
     if [ $count -eq $__LOOP ]; then
-        log_output -e "timeout, when get the hosts file."
+        log_output -e "Timeout, when get the hosts file."
         rm -f $OUTPUT_FILE
         kill $curl_pid
         __exit 1
@@ -81,13 +81,13 @@ if [ -d /system/app ]; then
     mount -o rw,remount,rw /system
     cp -f $OUTPUT_FILE /system/etc
     if [ -f /system/etc/hosts.hate ]; then
-        log_output -r "merge the hate hosts file to getting file."
+        log_output -r "Merge the hate hosts file to getting file."
         cat /system/etc/hosts.hate >> /system/etc/hosts
     fi
     mount -o ro,remount,ro /system
 else
     cp -f $OUTPUT_FILE /system/etc
-    log_output -r "merge the hate hosts file to getting file."
+    log_output -r "Merge the hate hosts file to getting file."
     cat /etc/hosts.hate >> /etc/hosts
 fi
 
