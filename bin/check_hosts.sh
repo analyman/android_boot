@@ -34,12 +34,13 @@ checking()
     if [ ! -f $HOSTS ]; then
         if [ -f ${HOSTS_SRC} ]; then
             cp ${HOSTS_SRC} $HOSTS
-        fi
-    else
-        log_output -w "Don't exist a hosts file."
-        if [ ! -z `which get_hosts.sh` ]; then
-            log_output -r "Get hosts from internet by script, after 1 minute."
-            sh -c "sleep 60; get_hosts.sh && sleep 60; check_hosts.sh" &
+        else
+            log_output -w "Don't exist a hosts file."
+            if [ ! -z `which get_hosts.sh` ]; then
+                log_output -r "Get hosts from internet by script, after get_hosts.sh run success."
+                sh -c "get_hosts.sh && check_hosts.sh" &
+                __exit 1
+            fi
         fi
     fi
     # Main...
@@ -50,15 +51,8 @@ checking()
             log_output -w "Get hosts.hate file fail."
         fi
     fi
-    if [ ! -f ${HOSTS_HATE} ] && [ ! -f ${HOSTS} ]; then
-        log_output -e "Both hosts and hosts.hate file don't exist."
-        __exit 1
-    elif [ ! -f ${HOSTS_HATE} ]; then
+    if [ ! -f ${HOSTS_HATE} ]; then
         log_output -w "The hosts.hate don't exist, exit."
-        __exit 1
-    elif [ ! -f ${HOSTS} ]; then
-        log_output -w "The hosts file don't exist, copy hosts.hate to it."
-        cp $HOSTS_HATE $HOSTS
         __exit 1
     else
         if [[ ! $HOSTS -nt $HOSTS_HATE ]]; then

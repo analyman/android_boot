@@ -29,6 +29,19 @@ if [ -z `which sed` ]; then
     __exit 1
 fi
 
+for i in $(seq 1 100); do
+    if [ ! -z `lsof | grep "\/data\/file\.list$"` ]; then
+        sleep 1
+        log_output -w "Wait for the <$data_base> file be closed."
+        if [ $i -eq 100 ]; then
+            log_output -e "Waitting too long, exit."
+            __exit 1
+        fi
+    else
+        break
+    fi
+done
+
 data_base="/data/file.list"
 __line=
 line_count=1
@@ -38,7 +51,7 @@ while [ $line_count -le $line_total ]; do
     # remove blank file
     if [ ${__line[4]} -eq 0 ]; then
         rm -f ${__line[7]}
-        log_output -r "TRY TO REMOVE FILE <$__line[7]>."
+        log_output -r "TRY TO REMOVE FILE <${__line[7]}>."
         sed -in "$line_count d" $data_base
         line_total=$[$line_total - 1]
         continue
@@ -50,7 +63,7 @@ while [ $line_count -le $line_total ]; do
         ## zip file
         if [ $__str__="META-INF/MANIFEST.M" ] || [ $__str__="AndroidMainfest.xml" ]; then
             rm -f ${__line[7]}
-            log_output -r "TRY REMOVE FILE <$__line[7]>."
+            log_output -r "TRY REMOVE APK FILE <${__line[7]}>."
             sed -in "$line_count d" $data_base
             line_total=$[$line_total - 1]
             continue
